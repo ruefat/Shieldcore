@@ -5,7 +5,7 @@ export * from "./core/commands";
 
 const registeredCommands = new Map<string, Command>();
 
-function execute(raw: string) {
+function execute(raw: string, player: Player) {
 	print("Executing command:", raw);
 	const parts = raw.split(" ");
 
@@ -23,6 +23,10 @@ function execute(raw: string) {
 	}
 
 	const cmd = registeredCommands.get(input);
+	if (cmd?.guards && !cmd.guards(player)) {
+		warn(`Player ${player.Name} is not allowed to use command "${cmd.name}"`);
+		return;
+	}
 	if (cmd) {
 		print("Found command:", cmd.name);
 		cmd.execute(args);
@@ -43,7 +47,7 @@ export namespace ShieldCore {
 			player.Chatted.Connect((message) => {
 				print("Player chatted:", player.Name, message);
 				if (message.sub(1, 1) === "/") {
-					execute(message);
+					execute(message, player);
 				}
 			});
 		});
