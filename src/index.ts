@@ -52,4 +52,14 @@ export namespace ShieldCore {
 			});
 		});
 	}
+	export function Description(commandName: string) {
+		const cmd = registeredCommands.get(commandName.lower());
+		if (cmd) {
+			print(`Command: ${cmd.name}`);
+			print(`Description: ${cmd.description}`);
+			print(`Usage: ${cmd.usage}`);
+		} else {
+			warn(`Command "${commandName}" not found.`);
+		}
+	}
 }
