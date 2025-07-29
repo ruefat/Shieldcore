@@ -29,19 +29,19 @@ function execute(raw: string, player: Player) {
 	}
 	if (cmd) {
 		print("Found command:", cmd.name);
-		cmd.execute(args);
+		cmd.execute(player, args);
 	} else {
 		warn(`Command "${input}" not found.`);
 	}
 }
 
 export namespace ShieldCore {
-	export function registerCommand(cmd: Command) {
+	export function RegisterCommand(cmd: Command) {
 		print("Register command:", cmd.name.lower());
 		registeredCommands.set(cmd.name.lower(), cmd);
 	}
 
-	export function start() {
+	export function Start() {
 		print("ShieldCore started");
 		Players.PlayerAdded.Connect((player) => {
 			player.Chatted.Connect((message) => {
