@@ -29,7 +29,7 @@ function execute(raw: string, player: Player) {
 	}
 	if (cmd) {
 		print("Found command:", cmd.name);
-		cmd.execute(player, args);
+		cmd.execute(args, player);
 	} else {
 		warn(`Command "${input}" not found.`);
 	}
