@@ -4,6 +4,7 @@ import { Players } from "@rbxts/services";
 export * from "./core/commands";
 
 const registeredCommands = new Map<string, Command>();
+let serverstarted: boolean = false;
 
 function execute(raw: string, player: Player) {
 	print("Executing command:", raw);
@@ -37,20 +38,29 @@ function execute(raw: string, player: Player) {
 
 export namespace ShieldCore {
 	export function RegisterCommand(cmd: Command) {
-		print("Register command:", cmd.name.lower());
+		if (registeredCommands.has(cmd.name.lower())) {
+			warn(`Command "${cmd.name}" is already registered.`);
+			return;
+		}
 		registeredCommands.set(cmd.name.lower(), cmd);
+		print(`Registered command: ${cmd.name}`);
 	}
 
 	export function Start() {
-		print("ShieldCore started");
-		Players.PlayerAdded.Connect((player) => {
-			player.Chatted.Connect((message) => {
-				print("Player chatted:", player.Name, message);
-				if (message.sub(1, 1) === "/") {
-					execute(message, player);
-				}
+		if (serverstarted !== true) {
+			serverstarted = true;
+			print("ShieldCore started");
+			Players.PlayerAdded.Connect((player) => {
+				player.Chatted.Connect((message) => {
+					print("Player chatted:", player.Name, message);
+					if (message.sub(1, 1) === "/") {
+						execute(message, player);
+					}
+				});
 			});
-		});
+		} else {
+			warn("ShieldCore is already started.");
+		}
 	}
 	export function Description(commandName: string) {
 		const cmd = registeredCommands.get(commandName.lower());
